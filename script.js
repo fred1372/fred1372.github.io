@@ -3,12 +3,12 @@
 $(document).ready(function () {
 
     var config = {
-        apiKey: "AIzaSyCQD8-6FZebvC-rqaiAQtJumVc_aOvGRh0",
-        authDomain: "survey-b0ce3.firebaseapp.com",
-        databaseURL: "https://survey-b0ce3.firebaseio.com",
-        projectId: "survey-b0ce3",
-        storageBucket: "",
-        messagingSenderId: "390860367232"
+        apiKey: "AIzaSyAa0tNM_tescIisPKy2ITjW54SnhV5Dxcs",
+        authDomain: "bartgameubc2018.firebaseapp.com",
+        databaseURL: "https://bartgameubc2018.firebaseio.com",
+        projectId: "bartgameubc2018",
+        storageBucket: "bartgameubc2018.appspot.com",
+        messagingSenderId: "495232641371"
     };
     firebase.initializeApp(config);
     var saveThis = 'hidden'; // text fields that saves data should not be shown; can be shown in testing
@@ -20,9 +20,11 @@ $(document).ready(function () {
     var size; // start_size incremented by 'increase'
     var pumps;
     var total = 0; // money that has been earned in total
-    var rounds_played = 12;
-    var explode_array =  Array.from({length: 12}, () => Math.floor(Math.random() * 20));
-    var maximal_pumps = 186;
+    var rounds_played = 17;
+    var explode_array = Array.from({
+        length: 17
+    }, () => Math.floor(Math.random() * 20 + 2));
+    var maximal_pumps = 1286;
     var pumpmeup; // number pumps in a given round; is updated each round
     var number_pumps = []; // arrays for saving number of pumps
     var exploded = []; // array for saving whether ballon has exploded
@@ -31,9 +33,7 @@ $(document).ready(function () {
     var current_win = 0;
 
     var id1 = $('#uid').text();
-    console.log(id1);
-    
-    
+
     // initialize language
     var label_press = 'PUMP';
     var label_collect = 'COLLECT $';
@@ -41,7 +41,7 @@ $(document).ready(function () {
     var label_last = 'Last Round:';
     var label_current = 'Current Round:';
     var label_currency = ' $';
-    var total_term= 'Total Money you Earned ';
+    var total_term = 'Total Money you Earned ';
     var label_header = 'Round ';
     var label_gonext1 = 'Next Balloon';
     var label_gonext2 = 'Save and Continue';
@@ -51,19 +51,17 @@ $(document).ready(function () {
     var msg_collect1 = '<p>Money saved ! ';
     var msg_collect2 = '  You can see your balance at the bottom of the screen</p>';
 
-    var msg_end1 = '<p>TThank you for playing the Balloon Game. Please go back to the survey. ';
+    var msg_end1 = '<p>Thank you for playing the Balloon Game. Please go back to the survey. ';
     var msg_end2 = ' ';
 
     var err_msg = 'Please press air into balloon';
+    var msg_endtrail = 'End of Trial Rounds. The real game will start on the next page.'
     var messagesRef = firebase.database().ref('messages');
-   // document.getElementById('surveyForm').addEventListener('submit', submitForm);
+    // document.getElementById('surveyForm').addEventListener('submit', submitForm);
     var el = document.getElementById('surveyForm');
-    if(el){
+    if (el) {
         el.addEventListener('submit', submitForm);
-        }
-
-
-
+    }
 
     // initialize labels
     $('#press').html(label_press);
@@ -72,16 +70,15 @@ $(document).ready(function () {
     $('#total_value').html(total + label_currency);
     $('#last_term').html(label_last);
     $('#last_value').html(last_win + label_currency);
-    
+
     $('#Current_value').html(current_win + label_currency);
     $('#Current_term').html(label_current);
     // below: create functions that define game functionality
 
-
-
     // what happens when a new round starts
     var new_round = function () {
-        console.log(round);
+
+
         $('#gonext').hide();
         $('#message').hide();
         $('#collect').show();
@@ -89,19 +86,17 @@ $(document).ready(function () {
         round += 1;
         size = start_size;
         pumps = 0;
-        current_win=pumps;
+        current_win = pumps;
         current_value();
-         $('#Current').show();
+        $('#Current').show();
         $('#ballon').width(size);
         $('#ballon').height(size);
         $('#ballon').show();
-        if(round< 3){
+        if (round < 3) {
             $('#round').html('<h2>' + label_header + round + ' (Trial) <h2>');
-        }else{
-             $('#round').html('<h2>' + label_header + ( round - 2 ) + '<h2>');
+        } else {
+            $('#round').html('<h2>' + label_header + (round - 2) + '<h2>');
         }
-        
-        console.log(round);
 
     };
 
@@ -119,19 +114,17 @@ $(document).ready(function () {
         store_data();
         $('#bigwrap').hide();
     };
-    
+
     var store_data = function () {
         var id1 = $('#uid').text();
-        console.log(id1);
-            var clientip=$('#ipad').text();
-         $("#userIP").val(clientip);
+        var clientip = $('#ipad').text();
+        $("#userIP").val(clientip);
         $("#userId").val(id1);
         $("#numberOfPumps").val(number_pumps);
         $("#noOfExplosen").val(exploded);
         $("#Total").val(total.toFixed(2));
-        $("#TotalMoney").val((total*0.02).toFixed(2));
-         $('#EarnM').html(total_term + (total*0.02).toFixed(2) + label_currency);
-
+        $("#TotalMoney").val((total * 0.02).toFixed(2));
+        $('#EarnM').html(total_term + (total * 0.02).toFixed(2) + label_currency);
     };
 
     // message shown if balloon explodes
@@ -147,7 +140,12 @@ $(document).ready(function () {
         $('#collect').hide();
         $('#press').hide();
         $('#Current').hide();
-        $('#message').html(msg_collect1 + msg_collect2).show();
+        if (round == 2) {
+            $('#message').html(msg_collect1 + msg_collect2 + msg_endtrail).show();
+        } else {
+            $('#message').html(msg_collect1 + msg_collect2).show();
+        }
+
     };
 
     // animate explosion using jQuery UI explosion
@@ -155,10 +153,8 @@ $(document).ready(function () {
         $('#ballon').hide("explode", {
             pieces: 48
         }, 1000);
-
         // activate this if you have a sound file to play a sound
         // when the balloon explodes:
-
         // document.getElementById('explosion_sound').play();
     };
 
@@ -170,19 +166,20 @@ $(document).ready(function () {
         } else {
             $('#gonext').html(label_gonext2).show();
         }
+
     };
 
     // add money to bank
     var increase_value = function () {
-        $('#total_value').html((total*0.02).toFixed(2) + label_currency);
+        $('#total_value').html((total * 0.02).toFixed(2) + label_currency);
     };
 
     var show_last = function () {
-        $('#last_value').html((last_win*0.02).toFixed(2) + label_currency);
+        $('#last_value').html((last_win * 0.02).toFixed(2) + label_currency);
     };
-    
-    var current_value = function(){
-         $('#Current_value').html((current_win*0.02).toFixed(2) + label_currency);
+
+    var current_value = function () {
+        $('#Current_value').html((current_win * 0.02).toFixed(2) + label_currency);
     };
 
     // button functionalities
@@ -192,16 +189,15 @@ $(document).ready(function () {
         if (pumps >= 0 && pumps < maximal_pumps) { // interacts with the collect function, which sets pumps to -1, making the button temporarily unclickable
             explosion = 0; // is set to one if pumping goes beyond explosion point; see below
             pumps += 1;
-             current_win =pumps; 
-                current_value();
+            current_win = pumps;
+            current_value();
             if (pumps < explode_array[round - 1]) {
                 size += increase;
                 $('#ballon').width(size);
                 $('#ballon').height(size);
-            } else if(round > 2) {
+            } else if (round > 2) {
                 last_win = 0;
                 pumpmeup = pumps;
-                 
                 pumps = -1; // makes pumping button unclickable until new round starts
                 explosion = 1; // save that balloon has exploded this round
                 balloon_explode();
@@ -211,18 +207,16 @@ $(document).ready(function () {
                 setTimeout(gonext_message, 1200);
                 setTimeout(show_last, 1200);
 
-            }
-            else if(round < 3){
+            } else if (round < 3) {
                 last_win = 0;
                 pumpmeup = pumps;
-               
                 pumps = -1; // makes pumping button unclickable until new round starts
                 explosion = 1; // save that balloon has exploded this round
                 balloon_explode();
                 setTimeout(explosion_message, 1200);
                 setTimeout(gonext_message, 1200);
                 setTimeout(show_last, 1200);
-            
+
             }
         }
     });
@@ -248,8 +242,7 @@ $(document).ready(function () {
             last_win = pumpmeup;
             increase_value();
             show_last();
-        }
-        else if(pumps > 0 && round < 3){
+        } else if (pumps > 0 && round < 3) {
             pumpmeup = pumps;
             pumps = -1; // makes pumping button unclickable until new round starts
             $('#ballon').hide();
@@ -263,36 +256,25 @@ $(document).ready(function () {
     // click this button to start the next round (or end game when all rounds are played)
     $('#gonext').click(function () {
         if (round < rounds_played) {
-            console.log(number_pumps);
-            console.log(exploded);
             new_round();
 
         } else {
-            console.log(number_pumps);
-            console.log(exploded);
             end_game();
 
         }
     });
 
-
-       
-    
     function submitForm(e) {
         e.preventDefault();
-
         // Get values
         var UserID = getInputVal('userId');
         var UserIP = getInputVal('userIP');
         var NumberofPupms = getInputVal('numberOfPumps');
         var NumberofExpln = getInputVal('noOfExplosen');
         var TotalMoney = getInputVal('TotalMoney');
-        
-        
-        
         // Save message
-       
-        saveMessage(UserID, NumberofPupms, NumberofExpln, TotalMoney,UserIP);
+
+        saveMessage(UserID, NumberofPupms, NumberofExpln, TotalMoney, UserIP);
 
         // Show alert
         document.querySelector('.alert').style.display = 'block';
@@ -306,26 +288,22 @@ $(document).ready(function () {
         $('#surveyForm').hide();
         window.location = "https://ubcbusiness.qualtrics.com/jfe/form/SV_2uEXrMHhS6O59dz";
     }
-    
-    
 
-    function saveMessage(UserID, NumberofPupms, NumberofExpln, TotalMoney,UserIP) {
+    function saveMessage(UserID, NumberofPupms, NumberofExpln, TotalMoney, UserIP) {
         var newMessageRef = messagesRef.push();
         newMessageRef.set({
             UserID: UserID,
             NumberofPupms: NumberofPupms,
             NumberofExpln: NumberofExpln,
             TotalMoney: TotalMoney,
-            UserIP:UserIP
+            UserIP: UserIP
         });
     }
 
     function getInputVal(id) {
         return document.getElementById(id).value;
     }
-
     // start the game!
     new_round();
-
 
 });
